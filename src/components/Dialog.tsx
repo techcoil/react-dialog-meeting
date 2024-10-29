@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { useDialog } from "../context";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type Props = Readonly<{
   title: string;
@@ -11,6 +11,8 @@ const container: HTMLElement = document.querySelector("#modal-root")!;
 
 export function Dialog({ title, content }: Props) {
   const { close } = useDialog();
+  const closeRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     function closeOnEscape(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -22,6 +24,12 @@ export function Dialog({ title, content }: Props) {
       window.removeEventListener("keydown", closeOnEscape);
     };
   });
+
+  useEffect(() => {
+    if (closeRef.current) {
+      closeRef.current.focus();
+    }
+  }, [closeRef]);
   return (
     <>
       {createPortal(
@@ -33,7 +41,13 @@ export function Dialog({ title, content }: Props) {
           />
 
           <div className="bg-red-500 absolute inset-10">
-            <button onClick={() => close()}>Close</button>
+            <button
+              onClick={() => close()}
+              ref={closeRef}
+              className="border text-xs px-2 py-1 hover:underline focus:underline"
+            >
+              Close
+            </button>
             <h1>{title}</h1>
             <p>{content}</p>
           </div>

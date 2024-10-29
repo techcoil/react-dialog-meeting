@@ -1,19 +1,6 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useMemo, useState } from "react";
+import { dialogContext, type DialogContent } from "./context";
 import { Dialog } from "./components/Dialog";
-
-const dialogContext = createContext<{
-  open: (title: string, content: string) => void;
-  close: () => void;
-}>({
-  open: () => {},
-  close: () => {},
-});
 
 export function DialogProvider({
   children,
@@ -21,11 +8,11 @@ export function DialogProvider({
   children: React.ReactNode;
 }>) {
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState<DialogContent>(undefined);
   const [isOpen, setIsOpen] = useState(false);
 
   const open = useCallback(
-    (title: string, content: string) => {
+    (title: string, content: DialogContent) => {
       setTitle(title);
       setContent(content);
       setIsOpen(true);
@@ -33,9 +20,9 @@ export function DialogProvider({
     [setTitle, setContent]
   );
 
-  const close = () => {
+  const close = useCallback(() => {
     setIsOpen(false);
-  };
+  }, []);
 
   const value = useMemo(() => ({ open, close }), [open, close]);
 
@@ -46,14 +33,3 @@ export function DialogProvider({
     </dialogContext.Provider>
   );
 }
-
-export const useDialog = () => useContext(dialogContext);
-
-export const usePredefinedDialog = (title, content) => {
-  const { open, ...more } = useDialog();
-
-  return {
-    open: () => open(title, content),
-    ...more,
-  };
-};

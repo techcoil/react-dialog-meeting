@@ -1,15 +1,14 @@
 import { useEffect } from "react";
-import "./App.css";
-import { Drawer } from "./components/Drawer";
-import { DialogProvider } from "./context";
 import {
   createBrowserRouter,
-  RouterProvider,
-  Link,
+  NavLink,
   Outlet,
+  RouterProvider,
 } from "react-router-dom";
+import "./App.css";
 import { Page } from "./components/Page";
 import { Page2 } from "./components/Page2";
+import { DialogProvider } from "./DialogProvider";
 
 const router = createBrowserRouter([
   {
@@ -17,12 +16,30 @@ const router = createBrowserRouter([
     element: (
       <div className="flex flex-col h-screen">
         <menu className="flex gap-4 flex-shrink bg-blue-400 text-white p-2 items-center justify-center">
-          <Link to="/page" className="hover:underline">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `hover:underline ${isActive ? "underline" : ""}`
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/page"
+            className={({ isActive }) =>
+              `hover:underline ${isActive ? "underline" : ""}`
+            }
+          >
             Go to Page 1
-          </Link>
-          <Link to="/page2" className="hover:underline">
+          </NavLink>
+          <NavLink
+            to="/page2"
+            className={({ isActive }) =>
+              `hover:underline ${isActive ? "underline" : ""}`
+            }
+          >
             Go to Page 2
-          </Link>
+          </NavLink>
         </menu>
         <div className="bg-gray-100 flex-grow">
           <Outlet />
@@ -30,6 +47,10 @@ const router = createBrowserRouter([
       </div>
     ),
     children: [
+      {
+        path: "/",
+        element: <div>Home page</div>,
+      },
       {
         path: "page",
         element: <Page />,
@@ -45,9 +66,9 @@ const router = createBrowserRouter([
 function App() {
   useEffect(() => {});
   return (
-    <DialogProvider>
+    <DialogProviderf>
       <RouterProvider router={router} />
-    </DialogProvider>
+    </DialogProviderf>
   );
 }
 
